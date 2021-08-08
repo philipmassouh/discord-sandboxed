@@ -1,11 +1,12 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
-const { initConfig, saveConfig } = require('./src/config')
+const {clipboard} = require('electron')
+
 const path = require('path')
 const URL = require('url').URL
-const {clipboard} = require('electron')
-const config = require('./src/config')
+
+const { initConfig, saveConfig } = require('./src/config')
+
 let ioHook = null
-const { session } = require('electron')
 
 try {
   ioHook = require('iohook')
