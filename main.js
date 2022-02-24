@@ -4,58 +4,23 @@ const {clipboard} = require('electron')
 const path = require('path')
 const URL = require('url').URL
 
-const { initConfig, saveConfig } = require('./src/config')
-
-let ioHook = null
-
-try {
-  ioHook = require('iohook')
-} catch(e) {
-  console.log(e)
-  ioHook = false
-}
-
 'use strict';
 
 let mainWindow
 let logWindow
-let settingsWindow
 
 let devMode = false
 let selfMute = false
 let isConnected = false
 let webViewSession = null
-let isTalking = false
-let muteTimeout = null
 let configObj
 let micPermissionGranted = false
-
-let isChangingPTTKey = false
-
-let pttEnable = 'mousedown' // init to mousedown/up
-let pttDisable = 'mouseup'
-let pttWatch = 'button'
 
 // Set Dev mode
 if (process.argv.length === 3) {
   if (process.argv[2] === 'dev'){
     devMode = true
   }
-}
-
-function unmuteMic() {
-  if ( selfMute === false){
-    isTalking = true
-    console.log("Talking")
-    mainWindow.webContents.send('micOpen', 'mic-open')
-    mainWindow.setTitle("MIC OPEN")
-  }
-}
-
-function muteMic() {
-  console.log("Not Talking")
-  mainWindow.webContents.send('micClose', 'mic-closed')
-  mainWindow.setTitle("MIC CLOSED")
 }
 
 function createMainWindow () {
@@ -115,28 +80,6 @@ function createLogWindow() {
   })
 }
 
-function createSettingsWindow() {
-  settingsWindow = new BrowserWindow({
-    width: 700,
-    height: 400,
-    show: true,
-    resizable: false,
-    alwaysOnTop:true,
-    webPreferences: {
-      preload: path.join(__dirname, 'src/settingsLoad.js'),
-      nodeIntegration: false,
-      enableRemoteModule: false,
-    },
-    frame: false
-  })
-
-  settingsWindow.loadFile('./views/settings.html')
-  settingsWindow.setTitle("Settings")
-  settingsWindow.on('closed', function () {
-    isChangingPTTKey = false
-    settingsWindow = null
-  })
-}
 
 function maximizeMinimizeState(windowName){
   if (windowName.isMaximized()) {
@@ -146,66 +89,13 @@ function maximizeMinimizeState(windowName){
   }
 }
 
-function restartioHook() {
-  if (ioHook) {
-    console.log("restarting io Hook")
-    return new Promise((resolve, reject) => {
-      return new Promise((resolve, reject) => {
-          ioHook.removeAllListeners('mousedown', () => {})
-          ioHook.removeAllListeners('mouseup', () => {})
-          ioHook.removeAllListeners('keydown', () => {})
-          ioHook.removeAllListeners('keyup', () => {})
-          ioHook.unload()
-          console.log("ioHook stopped")
-          return resolve(true)
-      }).then (v => {
-        return new Promise((resolve, reject) => {
-          ioHook.load()
-          console.log("ioHook started")
-          return resolve(true)
-        }).then(v => {
-          ioHook.start()
-          return resolve(true)
-        })
-      })
-    })
-  }
-}
-
-function setPTTKey() {
-  if (ioHook && configObj.pttDevice && configObj.pttDevice) {
-    console.log("Set PTT Key")
-    if (configObj.pttDevice === 'mouse'){
-      pttEnable = 'mousedown'
-      pttDisable = 'mouseup'
-      pttWatch = 'button'
-    }else if (configObj.pttDevice === 'keyboard'){
-      pttEnable = 'keydown'
-      pttDisable = 'keyup'
-      pttWatch = 'keycode'
-    }else {
-      console.log("ERROR: configObj did not set PTT device to mouse or keyboard.")
-    }
-
-    ioHook.on(pttEnable, event => {
-      if (event[pttWatch] == configObj.key && (micPermissionGranted === true) && (isConnected === true) && (isChangingPTTKey === false)) {
-        clearTimeout(muteTimeout)
-        unmuteMic()
-      }
-    })
-    
-    ioHook.on(pttDisable, event => {
-      if (event[pttWatch] == configObj.key) {
-        if (isTalking === true) {
-          isTalking = false
-          muteTimeout = setTimeout(() => muteMic(), configObj.delay)
-        }
-      }
-    })
-
-  }else {
-    console.log("Not listening for keypresses. ioHook library error or PTT keys not set.")
-  }
+function listenForKeySignal() {
+  console.log('listening for key signals...');
+  // Listen for process signal
+  // SIGUSR2 - Toggle muted
+  process.on('SIGUSR2', () => {
+    mainWindow.webContents.send('micToggle', 'mic-toggled');
+  });
 }
 
 app.on('ready', createMainWindow)
@@ -332,13 +222,6 @@ ipcMain.on('asynchronous-message', (event, _data) => {
     mainWindow.webContents.send('devMode', devMode)
   }
 
-  if (msg === 'confirmMicClose') {
-    if (isTalking === true) {
-      console.log("Mic state desync. Opening Mic.")
-      unmuteMic()
-    }
-  }
-
   if (msg === 'blockUpdate') {
     if (logWindow){
       logWindow.webContents.send('blockUpdate', _data.data)
@@ -352,9 +235,6 @@ ipcMain.on('asynchronous-message', (event, _data) => {
     if (_data.data.wName === 1) {
       logWindow.minimize()
     }
-    if (_data.data.wName === 2) {
-      settingsWindow.minimize()
-    }
   }
 
   if (msg === 'maximizeApplication') {
@@ -364,9 +244,6 @@ ipcMain.on('asynchronous-message', (event, _data) => {
     if (_data.data.wName === 1) {
       maximizeMinimizeState(logWindow)
     }
-    if (_data.data.wName === 2) {
-      maximizeMinimizeState(settingsWindow)
-    }
   }
 
   if (msg === 'closeApplication') {
@@ -375,9 +252,6 @@ ipcMain.on('asynchronous-message', (event, _data) => {
     }
     if (_data.data.wName === 1) {
       logWindow.close()
-    }
-    if (_data.data.wName === 2) {
-      settingsWindow.close()
     }
   }
 
@@ -390,114 +264,11 @@ ipcMain.on('asynchronous-message', (event, _data) => {
       logWindow.center()
     }
   }
-
-  if (msg === 'openSettings') {
-    if (settingsWindow) {
-      if (settingsWindow.isMinimized()) settingsWindow.restore()
-      settingsWindow.focus()
-    }else {
-      createSettingsWindow()
-      settingsWindow.center()
-    }
-  }
-
-  if (msg === 'SettingsDOMReady') {
-    if (settingsWindow) {
-      console.log("SettingsDOMReady. Sending Settings DOM obj")
-      settingsWindow.webContents.send('settingsObj', configObj)
-    }
-  }
-
-  if (msg === 'setPTTKey') {
-    if (settingsWindow) {
-      if (ioHook) {
-          isChangingPTTKey = true
-          console.log("waiting for user to rebind")
-          if (settingsWindow && isChangingPTTKey) {
-            
-            restartioHook().then(v => {
-
-              mainWindow.blur()
-              
-              ioHook.once('keydown', event => {
-                if (settingsWindow && isChangingPTTKey) {
-                  console.log("rebind success")
-                  configObj.pttDevice = 'keyboard'
-                  configObj.key = event.keycode
-                  isChangingPTTKey = false
-                  saveConfig(configObj)
-                  settingsWindow.webContents.send('settingsObj', configObj)
-                  setPTTKey()
-                }
-              })
-              
-              // Ignore using left click (mouse1)
-              ioHook.once('mousedown', event => {
-                if (settingsWindow && isChangingPTTKey && event.button !== 1) {
-                  console.log("rebind success")
-                  configObj.pttDevice = 'mouse'
-                  configObj.key = event.button
-                  isChangingPTTKey = false
-                  saveConfig(configObj)
-                  settingsWindow.webContents.send('settingsObj', configObj)
-                  setPTTKey()
-                }
-              })
-            })
-          }
-      }
-    }
-  }
-
-  if (msg === 'cancelSetPTTKey') {
-    console.log("cancel set new PTT")
-    isChangingPTTKey = false
-    saveConfig(configObj)
-    settingsWindow.webContents.send('settingsObj', configObj)
-  }
-
-  if (msg === 'setPTTDelay') {
-    console.log(`New PTT Delay: ${_data.data} ms`)
-    configObj.delay = _data.data
-    saveConfig(configObj)
-    settingsWindow.webContents.send('settingsObj', configObj)
-  }
-
-  if (msg === 'disablePTT') {
-    if (_data.data === false) {
-      console.log(`PTT Disabled`)
-      configObj.delay = null
-      configObj.key = null
-      configObj.pttDevice = null
-      saveConfig(configObj)
-      settingsWindow.webContents.send('settingsObj', configObj)
-    }
-    if (_data.data === true) {
-      console.log(`PTT Enabled`)
-      configObj.delay = 1000
-      configObj.key = "none"
-      configObj.pttDevice = "none"
-      saveConfig(configObj)
-      settingsWindow.webContents.send('settingsObj', configObj)
-    }
-
-  }
-
 })
 
 app.on('ready', event => {
   console.log(`Dev Mode: ${devMode}`)
 
-  initConfig()
-    .then(value => {
-      configObj = value
-      return configObj
-    })
-    .then(configObj => {
-      console.log(configObj)
-      restartioHook().then(() => {
-        setPTTKey()
-      })
-  })
+  listenForKeySignal();
 })
 

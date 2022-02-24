@@ -19,18 +19,10 @@ function convertObjToString(arr) {
     return arrStr
 }
 
-function openMic(webview){  
-    console.log("talking")
-    document.getElementById("overlay").style.display = "block";
-    webview.sendInputEvent({keyCode: 'Backspace', type: 'keyDown'});
-    //webview.sendInputEvent({keyCode: 'Backspace', type: 'char'});
-}
-
-function muteMic(webview){
-    console.log("not talking")
-    document.getElementById("overlay").style.display = "none";
-    webview.sendInputEvent({keyCode: 'Backspace', type: 'keyUp'});
-    //webview.sendInputEvent({keyCode: 'Backspace', type: 'char'});
+function toggleMic(webview) {
+  webview.executeJavaScript(`
+      document.querySelector('button[aria-label="Mute"]').click();
+  `);
 }
 
 function removeBloat(webview) {
@@ -85,8 +77,8 @@ onload = () => {
 
     // Insert JS to detect when discord finishes loading
     webview.addEventListener('did-finish-load', function() {
-        
         webview.executeJavaScript(`
+        
         (function(open, send) {
             let whiteList = ${_whiteList}
             
@@ -155,32 +147,6 @@ onload = () => {
                 }
             }
         })(XMLHttpRequest.prototype.open, XMLHttpRequest.prototype.send)
-        `)
-
-        webview.executeJavaScript(`
-        let dlButton = document.querySelectorAll('[aria-label="Download Apps"]')
-        t = setInterval(function(){
-            let dlButton = document.querySelectorAll('[aria-label="Servers sidebar"]')
-            if(dlButton.length != 0) {
-                console.log("--discord-load-complete")
-                clearInterval(t)
-                isMicMuted()
-            }else {
-                console.log("waiting for load")
-                console.log(dlButton)
-            }
-        }, 500);
-        `)
-    
-        // Insert a function that will be called later
-        webview.executeJavaScript(`
-            function isMicMuted() {
-                if (document.querySelectorAll('[aria-label="Mute"]')[0].getAttribute("aria-checked") === "false"){
-                    console.log("unmuted")
-                }else {
-                    console.log("muted")
-                }
-            }
         `)
     })
 
@@ -269,14 +235,9 @@ onload = () => {
                     document.getElementById('titleBar').style.color = "#ffffff"
                 }
 
-                if (event.data.type === 'micOpen'){
-                    openMic(webview)
-                    window.postMessage({ type: "confirmMicOpen"}, "*")
-                }
-
-                if (event.data.type === 'micClose'){
-                    muteMic(webview)
-                    window.postMessage({ type: "confirmMicClose"}, "*")
+                if (event.data.type === 'micToggle') {
+                  console.log('toggling mic');
+                  toggleMic(webview);
                 }
 
                 if (event.data.type === 'URLCopied') {

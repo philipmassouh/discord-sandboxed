@@ -1,19 +1,15 @@
 const { ipcRenderer } = require('electron')
-
+  
 // Pass commands sent from main.js to mainRender.js
 ipcRenderer.on('devMode', (event, msg) => {
   console.log(`PRELOAD: Dev Mode: ${msg}`)
   window.postMessage({ type: "devMode", text: `${msg}` }, "*")
 })
 
-ipcRenderer.on('micOpen', (event, msg) => {
-  window.postMessage({ type: "micOpen"}, "*")
+ipcRenderer.on('micToggle', (event, msg) => {
+  console.log('got toggle mic');
+  window.postMessage({ type: "micToggle"}, "*")
 })
-
-ipcRenderer.on('micClose', (event, msg) => {
-  window.postMessage({ type: "micClose"}, "*")
-})
-
 
 ipcRenderer.on('URLCopied', (event, msg) => {
   window.postMessage({ type: "URLCopied"}, "*")
@@ -79,11 +75,6 @@ window.addEventListener(
 
       if (event.data.type === 'openLog'){
         ipcRenderer.send('asynchronous-message', {msg: 'openLog'})
-      }
-
-      
-      if (event.data.type === 'openSettings'){
-        ipcRenderer.send('asynchronous-message', {msg: 'openSettings'})
       }
     }
   },

@@ -15,54 +15,6 @@
       
       <div class="title-bar" id="titleBar">
         <div class="menu-button-container">
-          <div id="openSettingsButton" class="menu-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
-              <path
-                fill="currentColor"
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="
-                M 12.00,5.00
-                C 12.00,5.00 12.00,7.00 12.00,7.00
-                  12.00,7.00 10.59,7.00 10.57,7.01
-                  10.42,7.59 10.17,8.13 9.84,8.61
-                  9.84,8.61 10.74,9.51 10.74,9.51
-                  10.74,9.51 9.49,10.75 9.49,10.75
-                  9.49,10.75 8.59,9.85 8.59,9.85
-                  8.11,10.19 7.57,10.44 6.99,10.59
-                  6.99,10.59 6.99,12.00 6.99,12.00
-                  6.99,12.00 4.99,12.00 4.99,12.00
-                  4.99,12.00 4.99,10.58 4.99,10.58
-                  4.41,10.43 3.87,10.18 3.39,9.85
-                  3.39,9.85 2.49,10.75 2.49,10.75
-                  2.49,10.75 1.25,9.50 1.25,9.50
-                  1.25,9.50 2.15,8.60 2.15,8.60
-                  1.81,8.13 1.56,7.58 1.41,7.00
-                  1.41,7.00 0.00,7.00 0.00,7.00
-                  0.00,7.00 0.00,5.00 0.00,5.00
-                  0.00,5.00 1.41,5.00 1.41,5.00
-                  1.56,4.42 1.81,3.88 2.15,3.40
-                  2.15,3.40 1.25,2.50 1.25,2.50
-                  1.25,2.50 2.50,1.25 2.50,1.25
-                  2.50,1.25 3.40,2.15 3.40,2.15
-                  3.87,1.81 4.42,1.56 5.00,1.41
-                  5.00,1.41 5.00,0.00 5.00,0.00
-                  5.00,0.00 7.00,0.00 7.00,0.00
-                  7.00,0.00 7.00,1.41 7.00,1.41
-                  7.58,1.57 8.12,1.81 8.60,2.15
-                  8.60,2.15 9.51,1.25 9.51,1.25
-                  9.51,1.25 10.75,2.50 10.75,2.50
-                  10.75,2.50 9.85,3.40 9.85,3.40
-                  10.19,3.87 10.44,4.42 10.59,5.00
-                  10.59,5.00 12.00,5.00 12.00,5.00 Z
-                M 6.00,8.00
-                C 7.10,8.00 8.00,7.10 8.00,6.00
-                  8.00,4.90 7.10,4.00 6.00,4.00
-                  4.90,4.00 4.00,4.90 4.00,6.00
-                  4.00,7.10 4.90,8.00 6.00,8.00 Z"
-              />
-            </svg>
-          </div>
           <div id="openLogButton" class="menu-button">
             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-card-text" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
@@ -94,7 +46,13 @@
     
       <div id="mainDisplay">
         <!-- https://electronjs.org/docs/tutorial/security#15-disable-the-remote-module -->
-        <webview id="discord" enableremotemodule="false" webpreferences="useragent='Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko'" partition="persist:discord" src="https://discord.com/login"></webview>
+        <webview
+          id="discord"
+          enableremotemodule="false"
+          webpreferences="useragent='Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko'"
+          partition="persist:discord"
+          src="https://discord.com/login"
+        ></webview>
       
       </div>
     </div>

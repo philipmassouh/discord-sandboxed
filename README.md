@@ -13,29 +13,15 @@ Note that since this client is running the Discord web client, the following fea
     - Discord's "High Quality Audio" or whatever
 
 
-## Configuration
-> ~/.config/discord-sandbox/settings.json
-> delay:     Push to Talk Release Delay (ms)
-> pttDevice: Push to Talk Device ("mouse" or "keyboard")
-> key:       Push to Talk Key
+## Toggle Mute
+Push-to-Talk is configured using the SIGUSR2. Send a SIGUSR2 to the electron process to trigger a click on the mute button.
+You can send this signal in the terminal with pkill
+`pkill -SIGUSR2 --oldest electron`
 
-### Example Configuration
-> {
->   "delay": "1000"
->   "pttDevice": "mouse"
->   "key": "4"
-> }
+> Note: Make sure to use --oldest. Otherwise, the electron GPU processes will get angry and quit passive-agressively:
+> [130264:0223/232600.871793:FATAL:gpu\_data\_manager\_impl\_private.cc(448)] GPU process isn't usable. Goodbye.
+> /home/michael/builds/discord-sandboxed/node\_modules/electron/dist/electron exited with signal SIGTRAP
 
-## Push to Talk
-1. To enable push-to-talk, open Discord-Sandbox, set your push-to-talk key to `Backspace`, and lower the `Push to Talk Release Delay` slider all the way to 0 as shown.
-<p align="center">
-<img src="./docs/img/PTTSettings.PNG" />
-</p>
-
-2. Click on the gear icon in the top left corner. Check the box to enable system-wide push to talk. Set your push to talk key by clicking in the black box and pressing the desired key (Default PTT key is mouse button 4). Configuration settings are stored in `/Documents/DiscordSandbox/config.json`.
-<p align="center">
-<img src="./docs/img/PTT.PNG" />
-</p>
 
 
 ## Telemetry Mitigations
@@ -45,7 +31,7 @@ As detailed from [Luna Mendes' discord-unofficial-docs]("https://luna.gitlab.io/
 Discord likely does other sneaky things to spy on us. If you have any ideas on improving this project's security/privacy please let me know by opening an issue!
 
 
-Clicking on the Logs icon to the right of the settings button in the client will open the Log window, which will detail when a communication by the client is blocked.
+Clicking on the Logs icon in the client will open the Log window, which will detail when a communication by the client is blocked.
 <p align="center">
 <img src="./docs/img/logs.PNG" />
 </p>
