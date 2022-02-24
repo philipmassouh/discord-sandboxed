@@ -1,12 +1,13 @@
 # Discord-Sandbox <a href="https://github.com/khlam/discord-sandboxed/releases/latest"><img src="https://img.shields.io/badge/download-latest-green.svg"></a>
 
-> Open-source Sandbox Discord client for the privacy-minded. Say NO to intrusive data collection.
+> Open-source Sandbox Discord client
+> Because asking for privacy will get you nowhere.
 
 Are you worried Discord is watching what programs you have open or listening to your mic even while you're not pressing your push-to-talk key?
 Discord-Sandbox isolates the Discord client from reading background processes by running the [Discord web client](https://discord.com/) inside of a [\<webview>](https://developer.chrome.com/apps/tags/webview), which is finally contained inside the Electron process. While I cannot guarantee this client protects you from anything, I have tried my best to remove Discord's data collection.
 
 
-Note that since this client is running the Discord web client, the following features will NOT be available.
+Note that since this client is running the Discord web client, the following features will (unfortunately) NOT be available.
 
     - Viewing Streams or Streaming your desktop
     - Discord's "High Quality Audio" or whatever
@@ -56,16 +57,22 @@ This separates your activity from Discord without compromising usability.
 
 When your push-to-talk key is held down, the renderer process will send a `backspace` key-down keycode to the [\<webview>](https://developer.chrome.com/apps/tags/webview). This opens your microphone without giving the client window focus, so you can use Discord without worrying about the client listening in on whatever else you're running.
 
+# Installation (for Linux)
+
+## Prereqs
+- Make sure you've installed libxkbcommon-x11 `pacman -S libxkbcommon-x11`
 
 ## Building From Source
-0. If you're using Windows 10, make sure you have the [latest C++ Redistributable for Visual Studio 2015, 2017, and 2019](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
-0. If you're using Linux, make sure you've installed libxkbcommon-x11 (arch> sudo pacman -S libxkbcommon-x11)
 1. Install [Node (https://nodejs.org/en/download/)](https://nodejs.org/en/download/)
 2. Clone Repo `git clone https://github.com/khlam/discord-sandboxed.git`
 3. Install dependencies `npm i && npm i -d`
-4. Run `npm start`
-5. (Optional) Create Windows installer `npm run package-win`
+4. To test it out, run `npm start`
 
+## Packaging and Installing on Arch Linux (pacman)
+1. `yay -S libxcrypt-compat` Currently, electron-builder's ruby depends on an old version of libxcrypt so you might need to install the libxcrypt-compat library (especially if you're on a pretty minimal system)
+2. `npm run package-pacman` Create the pacman package with electron-builder
+3. `./dist/linux-unpacked/discord-sandbox` Test the unpacked version
+4. `pacman -U ./dist/discord-sandbox-x.x.x.pacman` Install with pacman
 
 > This Discord-Sandbox open source project is not affiliated with Discord or Discord Inc.
 I do not claim to have created Discord.

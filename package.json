@@ -1,13 +1,13 @@
 {
-  "name": "discordsandbox",
-  "version": "1.1.6",
-  "description": "Discord Sandboxed",
+  "name": "discord-sandbox",
+  "author": "Michael Peters <rick.rat@protonmail.com> (http://elipzer.com)",
+  "version": "1.2.0",
+  "description": "Puts Discord's web client in an electron webview to hard-block telemetry",
   "main": "main.js",
   "scripts": {
     "start": "electron . dev",
     "postinstall": "electron-builder install-app-deps",
-    "package-win": "electron-builder --win --publish never",
-    "package-AppImage": "electron-builder --linux AppImage"
+    "package-pacman": "electron-builder --linux pacman"
   },
   "repository": "https://github.com/khlam/discord-sandboxed",
   "keywords": [
@@ -15,52 +15,36 @@
     "privacy",
     "sandbox"
   ],
-  "author": "Kin-Ho Lam",
   "license": "GNU GENERAL PUBLIC LICENSE Version 3",
   "dependencies": {
-    "chokidar": "^3.3.1",
-    "graceful-fs": "^4.2.2",
-    "iohook": "^0.7.2"
+    "chokidar": "^3.5.3",
+    "graceful-fs": "^4.2.9"
   },
   "iohook": {
     "targets": [
-      "electron-80"
+      "node-102",
+      "electron-101"
     ],
     "platforms": [
-      "win32",
-      "darwin",
       "linux"
     ],
     "arches": [
       "x64"
     ]
   },
-  "build": {
-    "appId": "com.electron.DiscordSandboxed",
-    "productName": "Discord Sandboxed",
-    "win": {
-      "asar": true,
-      "icon": "views/assets/icon.ico",
-      "target": [
-        "nsis"
-      ]
-    },
-    "nsis": {
-      "installerIcon": "views/assets/icon.ico",
-      "uninstallerIcon": "views/assets/icon.ico",
-      "license": "LICENSE.md",
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "runAfterFinish": true
-    },
-    "directories": {
-      "output": "release"
-    }
-  },
   "devDependencies": {
     "electron": "^17.1.0",
     "electron-builder": "^22.14.13"
+  },
+  "linux": {
+    "target": "pacman",
+    "maintainer": "Michael Peters <rick.rat@protonmail.com> (http://elipzer.com)",
+    "icon": "views/assets/icon.ico",
+    "synopsis": "Discord Sandboxed fork by Michael Peters",
+    "description": "Puts Discord's web client in an electron webview to hard-block telemetry",
+    "depends": [
+      "libxkbcommon-x11"
+    ],
+    "packageName": "discord-sandboxed"
   }
 }
