@@ -4,9 +4,7 @@ const path = require('path')
 
 function _saveToConfig (configObj) {
     return new Promise(function (resolve, reject) {
-        const documentsDir = app.getPath('documents')
-        const configDir = path.join(documentsDir, 'DiscordSandbox')
-        const configFile = path.join(configDir, 'config.json')
+        const configFile = path.join(app.getPath('home'), '.config', 'discord-sandboxed', 'config.json');
         console.log('\tUpdating config.json', configObj)
         fs.writeFile(configFile, JSON.stringify(configObj, null, 2), (err) => {
             if (err) throw err;
@@ -18,9 +16,9 @@ function _saveToConfig (configObj) {
 module.exports = {
     initConfig: function () {
         return new Promise((resolve, reject) => {
-            const documentsDir = app.getPath('documents') // Fetchs user's documents directory
-            const configDir = path.join(documentsDir, 'DiscordSandbox') // config is stored in user's home dir
-            const configFile = path.join(configDir, 'config.json') // Saves all config information in config.json
+            const configDir = path.join(app.getPath('home'), '.config', 'discord-sandboxed');
+            const configFile = path.join(app.getPath('home'), '.config', 'discord-sandboxed', 'config.json');
+            console.log('init config at ', configFile);
             
             let configObj // Init configObj
             
@@ -31,11 +29,11 @@ module.exports = {
 
             // If config.json does not exist, create it with blank values
             if (!fs.existsSync(configFile)) {
-                console.log(`\tCreated ${configFile}`)
+                console.log(`\tCreated Default Config at [${configFile}]`)
                 configObj = {
-                'pttDevice': 'mouse',
-                'key': '4', 
-                'delay': '1000', 
+                   'pttDevice': 'mouse',
+                   'key': '4', 
+                   'delay': '1000', 
                 }
                 return resolve(_saveToConfig(configObj))
             }

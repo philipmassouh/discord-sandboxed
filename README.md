@@ -13,6 +13,19 @@ Note that since this client is running the Discord web client, the following fea
     - Discord's "High Quality Audio" or whatever
 
 
+## Configuration
+> ~/.config/discord-sandbox/settings.json
+> delay:     Push to Talk Release Delay (ms)
+> pttDevice: Push to Talk Device ("mouse" or "keyboard")
+> key:       Push to Talk Key
+
+### Example Configuration
+> {
+>   "delay": "1000"
+>   "pttDevice": "mouse"
+>   "key": "4"
+> }
+
 ## Push to Talk
 1. To enable push-to-talk, open Discord-Sandbox, set your push-to-talk key to `Backspace`, and lower the `Push to Talk Release Delay` slider all the way to 0 as shown.
 <p align="center">
@@ -56,6 +69,7 @@ The [Discord web client](https://discord.com/) lacks push-to-talk detection whil
 This separates your activity from Discord without compromising usability.
 
 When your push-to-talk key is held down, the renderer process will send a `backspace` key-down keycode to the [\<webview>](https://developer.chrome.com/apps/tags/webview). This opens your microphone without giving the client window focus, so you can use Discord without worrying about the client listening in on whatever else you're running.
+
 
 # Installation (for Linux)
 

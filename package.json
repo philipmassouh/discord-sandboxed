@@ -1,5 +1,5 @@
 {
-  "name": "discord-sandbox",
+  "name": "discord-sandboxed",
   "author": "Michael Peters <rick.rat@protonmail.com> (http://elipzer.com)",
   "version": "1.2.0",
   "description": "Puts Discord's web client in an electron webview to hard-block telemetry",
