@@ -1,9 +1,9 @@
 html, body{
-    color: #FFFFFF;
-    font-family: "Lucida Console", Courier, monospace;
-    background-color: #23272A;
-    margin: 0px;
-    padding: 0px;
+    color: #ffffff;
+    font-family: "Hack Nerd Font", Courier, monospace;
+    background-color: #202225;
+    margin: 0;
+    padding: 0;
 }
 
 .logContainer {
@@ -18,7 +18,8 @@ html, body{
     display: block;
 }
 
-.logTable td, .logTable th {
+.logTable td,
+.logTable th {
     border: 0px;
     padding: 3px;
     word-wrap: break-word;
