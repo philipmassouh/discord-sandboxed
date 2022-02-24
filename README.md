@@ -59,6 +59,7 @@ When your push-to-talk key is held down, the renderer process will send a `backs
 
 ## Building From Source
 0. If you're using Windows 10, make sure you have the [latest C++ Redistributable for Visual Studio 2015, 2017, and 2019](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads)
+0. If you're using Linux, make sure you've installed libxkbcommon-x11 (arch> sudo pacman -S libxkbcommon-x11)
 1. Install [Node (https://nodejs.org/en/download/)](https://nodejs.org/en/download/)
 2. Clone Repo `git clone https://github.com/khlam/discord-sandboxed.git`
 3. Install dependencies `npm i && npm i -d`
