@@ -41,22 +41,6 @@ window.addEventListener(
         ipcRenderer.send('asynchronous-message', {msg: 'disconnected'})
       }
 
-      if (event.data.type === 'self-muted'){
-        ipcRenderer.send('asynchronous-message', {msg:'self-muted'})
-      }
-
-      if (event.data.type === 'self-unmuted'){
-        ipcRenderer.send('asynchronous-message', {msg: 'self-unmuted'})
-      }
-
-      if (event.data.type === 'confirmMicOpen'){
-        ipcRenderer.send('asynchronous-message', {msg: 'confirmMicOpen'})
-      }
-
-      if (event.data.type === 'confirmMicClose'){
-        ipcRenderer.send('asynchronous-message', {msg: 'confirmMicClose'})
-      }
-
       if (event.data.type === 'blockUpdate'){
         ipcRenderer.send('asynchronous-message', {msg: 'blockUpdate', data: event.data.payload})
       }

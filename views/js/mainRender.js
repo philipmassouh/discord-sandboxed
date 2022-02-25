@@ -152,29 +152,6 @@ onload = () => {
 
    // Send commands to preload.js
    webview.addEventListener('console-message', (e) => {
-        if (e.message.includes("RTC media connection state: CONNECTED")) {
-            console.log("Connected to server")
-            window.postMessage({ type: "connected"}, "*")
-            removeBloat(webview)
-            isConnectedToVoiceServer = true
-        }
-
-        if (e.message.includes("RTC media connection state: DISCONNECTED")) {
-            console.log("Disconnected from server")
-            window.postMessage({ type: "disconnected"}, "*")
-            isConnectedToVoiceServer = false
-        }
-
-        if (e.message === "muted") {
-            console.log("Self Muted in Discord")
-            window.postMessage({ type: "self-muted"}, "*")
-        }
-
-        if (e.message === "unmuted") {
-            console.log("Self Un-Muted in Discord")
-            window.postMessage({ type: "self-unmuted"}, "*")
-        }
-
         // Execute JS into the webview after login
         if (e.message === "--discord-load-complete") {
             userMuteDeafenListener(webview)

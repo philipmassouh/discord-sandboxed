@@ -10,11 +10,7 @@ let mainWindow
 let logWindow
 
 let devMode = false
-let selfMute = false
-let isConnected = false
 let webViewSession = null
-let configObj
-let micPermissionGranted = false
 
 // Set Dev mode
 if (process.argv.length === 3) {
@@ -180,9 +176,8 @@ app.on('ready', () => {
   webViewSession.setPermissionRequestHandler((webContents, permission, callback) => { // deny all permissions
       const url = webContents.getURL()
       if (url.startsWith('https://discord.com/')) {
-        if (permission === 'media' && isConnected === true) { // if user is connected to Discord voice then enable microphone
-          console.log("User connected to Discord VOIP server. Granted permission for microphone")
-          micPermissionGranted = true
+        if (permission === 'media') { // if user is connected to Discord voice then enable microphone
+          console.log("Granted permission for 'media'");
           return callback(true)
         }
       }
@@ -193,29 +188,6 @@ app.on('ready', () => {
 
 ipcMain.on('asynchronous-message', (event, _data) => {
   let msg = _data.msg
-  if (msg === 'connected') {
-    console.log("User connected to Discord VOIP server")
-    if (micPermissionGranted === false && selfMute === false){
-      micPermissionGranted = true
-    }
-    isConnected = true
-  }
-
-  if (msg === 'disconnected') {
-    console.log("User disconnected to Discord VOIP server")
-    isConnected = false
-  }
-
-  if (msg === 'self-muted') {
-    console.log("User self-muted")
-    webViewSession.setPermissionRequestHandler(null)
-    selfMute = true
-  }
-
-  if (msg === 'self-unmuted') {
-    console.log("User self-unmuted")
-    selfMute = false
-  }
 
   if (msg === 'DOMready') {
     console.log("Discord webview loaded")
