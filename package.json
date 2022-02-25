@@ -20,18 +20,6 @@
     "chokidar": "^3.5.3",
     "graceful-fs": "^4.2.9"
   },
-  "iohook": {
-    "targets": [
-      "node-102",
-      "electron-101"
-    ],
-    "platforms": [
-      "linux"
-    ],
-    "arches": [
-      "x64"
-    ]
-  },
   "devDependencies": {
     "electron": "^17.1.0",
     "electron-builder": "^22.14.13"
